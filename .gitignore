@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editors
+.idea/
+*.iml
+.scratch
+
+# Tools
+tools/assets/icon-contact-sheet.png

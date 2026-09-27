@@ -1,0 +1,430 @@
+{
+  "contract": "each file is an SVG with viewBox=\"0 0 100 100\"; the art hangs on a <g id=\"<symbol_code>\"> element",
+  "counts": {
+    "total": 83,
+    "vector": 7,
+    "webp": 76
+  },
+  "generated_by": "tools/extract-icons.py",
+  "icons": {
+    "clearsky_day": {
+      "art": "meteogram:01d",
+      "file": "clearsky_day.svg",
+      "kind": "vector"
+    },
+    "clearsky_night": {
+      "art": "meteogram:01n",
+      "file": "clearsky_night.svg",
+      "kind": "vector"
+    },
+    "clearsky_polartwilight": {
+      "art": "webp:weather_icon_clearsky_polartwilight.webp",
+      "file": "clearsky_polartwilight.svg",
+      "kind": "webp"
+    },
+    "cloudy": {
+      "art": "meteogram:04",
+      "file": "cloudy.svg",
+      "kind": "vector"
+    },
+    "fair_day": {
+      "art": "meteogram:02d",
+      "file": "fair_day.svg",
+      "kind": "vector"
+    },
+    "fair_night": {
+      "art": "webp:weather_icon_fair_night.webp",
+      "file": "fair_night.svg",
+      "kind": "webp"
+    },
+    "fair_polartwilight": {
+      "art": "webp:weather_icon_fair_polartwilight.webp",
+      "file": "fair_polartwilight.svg",
+      "kind": "webp"
+    },
+    "fog": {
+      "art": "webp:weather_icon_fog.webp",
+      "file": "fog.svg",
+      "kind": "webp"
+    },
+    "heavyrain": {
+      "art": "webp:weather_icon_heavyrain.webp",
+      "file": "heavyrain.svg",
+      "kind": "webp"
+    },
+    "heavyrainandthunder": {
+      "art": "webp:weather_icon_heavyrainandthunder.webp",
+      "file": "heavyrainandthunder.svg",
+      "kind": "webp"
+    },
+    "heavyrainshowers_day": {
+      "art": "webp:weather_icon_heavyrainshowers_day.webp",
+      "file": "heavyrainshowers_day.svg",
+      "kind": "webp"
+    },
+    "heavyrainshowers_night": {
+      "art": "webp:weather_icon_heavyrainshowers_night.webp",
+      "file": "heavyrainshowers_night.svg",
+      "kind": "webp"
+    },
+    "heavyrainshowers_polartwilight": {
+      "art": "webp:weather_icon_heavyrainshowers_polartwilight.webp",
+      "file": "heavyrainshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "heavyrainshowersandthunder_day": {
+      "art": "webp:weather_icon_heavyrainshowersandthunder_day.webp",
+      "file": "heavyrainshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "heavyrainshowersandthunder_night": {
+      "art": "webp:weather_icon_heavyrainshowersandthunder_night.webp",
+      "file": "heavyrainshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "heavyrainshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_heavyrainshowersandthunder_polartwilight.webp",
+      "file": "heavyrainshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "heavysleet": {
+      "art": "webp:weather_icon_heavysleet.webp",
+      "file": "heavysleet.svg",
+      "kind": "webp"
+    },
+    "heavysleetandthunder": {
+      "art": "webp:weather_icon_heavysleetandthunder.webp",
+      "file": "heavysleetandthunder.svg",
+      "kind": "webp"
+    },
+    "heavysleetshowers_day": {
+      "art": "webp:weather_icon_heavysleetshowers_day.webp",
+      "file": "heavysleetshowers_day.svg",
+      "kind": "webp"
+    },
+    "heavysleetshowers_night": {
+      "art": "webp:weather_icon_heavysleetshowers_night.webp",
+      "file": "heavysleetshowers_night.svg",
+      "kind": "webp"
+    },
+    "heavysleetshowers_polartwilight": {
+      "art": "webp:weather_icon_heavysleetshowers_polartwilight.webp",
+      "file": "heavysleetshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "heavysleetshowersandthunder_day": {
+      "art": "webp:weather_icon_heavysleetshowersandthunder_day.webp",
+      "file": "heavysleetshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "heavysleetshowersandthunder_night": {
+      "art": "webp:weather_icon_heavysleetshowersandthunder_night.webp",
+      "file": "heavysleetshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "heavysleetshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_heavysleetshowersandthunder_polartwilight.webp",
+      "file": "heavysleetshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "heavysnow": {
+      "art": "webp:weather_icon_heavysnow.webp",
+      "file": "heavysnow.svg",
+      "kind": "webp"
+    },
+    "heavysnowandthunder": {
+      "art": "webp:weather_icon_heavysnowandthunder.webp",
+      "file": "heavysnowandthunder.svg",
+      "kind": "webp"
+    },
+    "heavysnowshowers_day": {
+      "art": "webp:weather_icon_heavysnowshowers_day.webp",
+      "file": "heavysnowshowers_day.svg",
+      "kind": "webp"
+    },
+    "heavysnowshowers_night": {
+      "art": "webp:weather_icon_heavysnowshowers_night.webp",
+      "file": "heavysnowshowers_night.svg",
+      "kind": "webp"
+    },
+    "heavysnowshowers_polartwilight": {
+      "art": "webp:weather_icon_heavysnowshowers_polartwilight.webp",
+      "file": "heavysnowshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "heavysnowshowersandthunder_day": {
+      "art": "webp:weather_icon_heavysnowshowersandthunder_day.webp",
+      "file": "heavysnowshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "heavysnowshowersandthunder_night": {
+      "art": "webp:weather_icon_heavysnowshowersandthunder_night.webp",
+      "file": "heavysnowshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "heavysnowshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_heavysnowshowersandthunder_polartwilight.webp",
+      "file": "heavysnowshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "lightrain": {
+      "art": "meteogram:46",
+      "file": "lightrain.svg",
+      "kind": "vector"
+    },
+    "lightrainandthunder": {
+      "art": "webp:weather_icon_lightrainandthunder.webp",
+      "file": "lightrainandthunder.svg",
+      "kind": "webp"
+    },
+    "lightrainshowers_day": {
+      "art": "webp:weather_icon_lightrainshowers_day.webp",
+      "file": "lightrainshowers_day.svg",
+      "kind": "webp"
+    },
+    "lightrainshowers_night": {
+      "art": "webp:weather_icon_lightrainshowers_night.webp",
+      "file": "lightrainshowers_night.svg",
+      "kind": "webp"
+    },
+    "lightrainshowers_polartwilight": {
+      "art": "webp:weather_icon_lightrainshowers_polartwilight.webp",
+      "file": "lightrainshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "lightrainshowersandthunder_day": {
+      "art": "webp:weather_icon_lightrainshowersandthunder_day.webp",
+      "file": "lightrainshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "lightrainshowersandthunder_night": {
+      "art": "webp:weather_icon_lightrainshowersandthunder_night.webp",
+      "file": "lightrainshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "lightrainshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_lightrainshowersandthunder_polartwilight.webp",
+      "file": "lightrainshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "lightsleet": {
+      "art": "webp:weather_icon_lightsleet.webp",
+      "file": "lightsleet.svg",
+      "kind": "webp"
+    },
+    "lightsleetandthunder": {
+      "art": "webp:weather_icon_lightsleetandthunder.webp",
+      "file": "lightsleetandthunder.svg",
+      "kind": "webp"
+    },
+    "lightsleetshowers_day": {
+      "art": "webp:weather_icon_lightsleetshowers_day.webp",
+      "file": "lightsleetshowers_day.svg",
+      "kind": "webp"
+    },
+    "lightsleetshowers_night": {
+      "art": "webp:weather_icon_lightsleetshowers_night.webp",
+      "file": "lightsleetshowers_night.svg",
+      "kind": "webp"
+    },
+    "lightsleetshowers_polartwilight": {
+      "art": "webp:weather_icon_lightsleetshowers_polartwilight.webp",
+      "file": "lightsleetshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "lightsnow": {
+      "art": "webp:weather_icon_lightsnow.webp",
+      "file": "lightsnow.svg",
+      "kind": "webp"
+    },
+    "lightsnowandthunder": {
+      "art": "webp:weather_icon_lightsnowandthunder.webp",
+      "file": "lightsnowandthunder.svg",
+      "kind": "webp"
+    },
+    "lightsnowshowers_day": {
+      "art": "webp:weather_icon_lightsnowshowers_day.webp",
+      "file": "lightsnowshowers_day.svg",
+      "kind": "webp"
+    },
+    "lightsnowshowers_night": {
+      "art": "webp:weather_icon_lightsnowshowers_night.webp",
+      "file": "lightsnowshowers_night.svg",
+      "kind": "webp"
+    },
+    "lightsnowshowers_polartwilight": {
+      "art": "webp:weather_icon_lightsnowshowers_polartwilight.webp",
+      "file": "lightsnowshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "lightssleetshowersandthunder_day": {
+      "art": "webp:weather_icon_lightssleetshowersandthunder_day.webp",
+      "file": "lightssleetshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "lightssleetshowersandthunder_night": {
+      "art": "webp:weather_icon_lightssleetshowersandthunder_night.webp",
+      "file": "lightssleetshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "lightssleetshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_lightssleetshowersandthunder_polartwilight.webp",
+      "file": "lightssleetshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "lightssnowshowersandthunder_day": {
+      "art": "webp:weather_icon_lightsnowshowersandthunder_day.webp",
+      "file": "lightssnowshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "lightssnowshowersandthunder_night": {
+      "art": "webp:weather_icon_lightssnowshowersandthunder_night.webp",
+      "file": "lightssnowshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "lightssnowshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_lightssnowshowersandthunder_polartwilight.webp",
+      "file": "lightssnowshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "partlycloudy_day": {
+      "art": "meteogram:03d",
+      "file": "partlycloudy_day.svg",
+      "kind": "vector"
+    },
+    "partlycloudy_night": {
+      "art": "meteogram:03n",
+      "file": "partlycloudy_night.svg",
+      "kind": "vector"
+    },
+    "partlycloudy_polartwilight": {
+      "art": "webp:weather_icon_partlycloudy_polartwilight.webp",
+      "file": "partlycloudy_polartwilight.svg",
+      "kind": "webp"
+    },
+    "rain": {
+      "art": "webp:weather_icon_rain.webp",
+      "file": "rain.svg",
+      "kind": "webp"
+    },
+    "rainandthunder": {
+      "art": "webp:weather_icon_rainandthunder.webp",
+      "file": "rainandthunder.svg",
+      "kind": "webp"
+    },
+    "rainshowers_day": {
+      "art": "webp:weather_icon_rainshowers_day.webp",
+      "file": "rainshowers_day.svg",
+      "kind": "webp"
+    },
+    "rainshowers_night": {
+      "art": "webp:weather_icon_rainshowers_night.webp",
+      "file": "rainshowers_night.svg",
+      "kind": "webp"
+    },
+    "rainshowers_polartwilight": {
+      "art": "webp:weather_icon_rainshowers_polartwilight.webp",
+      "file": "rainshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "rainshowersandthunder_day": {
+      "art": "webp:weather_icon_rainshowersandthunder_day.webp",
+      "file": "rainshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "rainshowersandthunder_night": {
+      "art": "webp:weather_icon_rainshowersandthunder_night.webp",
+      "file": "rainshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "rainshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_rainshowersandthunder_polartwilight.webp",
+      "file": "rainshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "sleet": {
+      "art": "webp:weather_icon_sleet.webp",
+      "file": "sleet.svg",
+      "kind": "webp"
+    },
+    "sleetandthunder": {
+      "art": "webp:weather_icon_sleetandthunder.webp",
+      "file": "sleetandthunder.svg",
+      "kind": "webp"
+    },
+    "sleetshowers_day": {
+      "art": "webp:weather_icon_sleetshowers_day.webp",
+      "file": "sleetshowers_day.svg",
+      "kind": "webp"
+    },
+    "sleetshowers_night": {
+      "art": "webp:weather_icon_sleetshowers_night.webp",
+      "file": "sleetshowers_night.svg",
+      "kind": "webp"
+    },
+    "sleetshowers_polartwilight": {
+      "art": "webp:weather_icon_sleetshowers_polartwilight.webp",
+      "file": "sleetshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "sleetshowersandthunder_day": {
+      "art": "webp:weather_icon_sleetshowersandthunder_day.webp",
+      "file": "sleetshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "sleetshowersandthunder_night": {
+      "art": "webp:weather_icon_sleetshowersandthunder_night.webp",
+      "file": "sleetshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "sleetshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_sleetshowersandthunder_polartwilight.webp",
+      "file": "sleetshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    },
+    "snow": {
+      "art": "webp:weather_icon_snow.webp",
+      "file": "snow.svg",
+      "kind": "webp"
+    },
+    "snowandthunder": {
+      "art": "webp:weather_icon_snowandthunder.webp",
+      "file": "snowandthunder.svg",
+      "kind": "webp"
+    },
+    "snowshowers_day": {
+      "art": "webp:weather_icon_snowshowers_day.webp",
+      "file": "snowshowers_day.svg",
+      "kind": "webp"
+    },
+    "snowshowers_night": {
+      "art": "webp:weather_icon_snowshowers_night.webp",
+      "file": "snowshowers_night.svg",
+      "kind": "webp"
+    },
+    "snowshowers_polartwilight": {
+      "art": "webp:weather_icon_snowshowers_polartwilight.webp",
+      "file": "snowshowers_polartwilight.svg",
+      "kind": "webp"
+    },
+    "snowshowersandthunder_day": {
+      "art": "webp:weather_icon_snowshowersandthunder_day.webp",
+      "file": "snowshowersandthunder_day.svg",
+      "kind": "webp"
+    },
+    "snowshowersandthunder_night": {
+      "art": "webp:weather_icon_snowshowersandthunder_night.webp",
+      "file": "snowshowersandthunder_night.svg",
+      "kind": "webp"
+    },
+    "snowshowersandthunder_polartwilight": {
+      "art": "webp:weather_icon_snowshowersandthunder_polartwilight.webp",
+      "file": "snowshowersandthunder_polartwilight.svg",
+      "kind": "webp"
+    }
+  },
+  "sources": {
+    "vector": "tools/assets/meteogram-6325496.svg",
+    "webp": "wettergraph/app/source-webp/weather_icon_*.webp"
+  }
+}
