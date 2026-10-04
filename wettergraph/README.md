@@ -20,7 +20,7 @@ Home Assistant OS only (native container installs have no app store).
 3. Reload the store page if needed, then install **Wettergraph**.
 4. **Start** it and open the **Log** tab. First lines:
 
-   `wettergraph: starting on :8099; options=/data/options.json present=True build=0.5.1`
+   `wettergraph: starting on :8099; options=/data/options.json present=True build=0.6.0`
    `wettergraph: time zone Europe/Berlin (from /homeassistant/.storage/core.config), local time now 12:36 CEST` (or `from TZ`)
    `wettergraph: met.no UA='Wettergraph/0.5.1 (Home Assistant app; +https://github.com/macmacs/ha-wettergraph)' cache=/data/forecast-cache.json`
    `wettergraph: share target /share/wettergraph/graph.png`
@@ -37,7 +37,7 @@ Home Assistant OS only (native container installs have no app store).
    ```
    wettergraph: PASS  /health returns 200 ok  (200 b'ok\n')
    wettergraph: PASS  / serves an HTML page  (200 text/html; charset=utf-8)
-   wettergraph: PASS  page lists every option  (7 rows for 7 options)
+   wettergraph: PASS  page lists every option  (8 rows for 8 options)
    wettergraph: PASS  option values reach the page  (image_theme='light')
    wettergraph: PASS  the page carries the Generic Camera URL and the file fallback  (3597B page)
    wettergraph: PASS  /image/graph serves a PNG at the option width (794x210)  (200 image/png 45943B 794x210)
@@ -47,15 +47,17 @@ Home Assistant OS only (native container installs have no app store).
    wettergraph: PASS  render font is readable (graph-spec §3.4)  (/usr/share/fonts/dejavu/DejaVuSans.ttf)
    wettergraph: PASS  renderer draws the curve, 30 icons and the bars (fixture)  (74638B SVG, 30 icons)
    wettergraph: PASS  ?age=1 draws the age chip (the card's only moving pixel)  (chip reads 'vor 5 min' 5 min after the fetch)
+   wettergraph: PASS  renderer shades the night (fixture, graph-spec §4.9)  (fixture night shaded)
+   wettergraph: PASS  sun.sun is readable for the day/night shading  (above_horizon)
    wettergraph: PASS  the fallback copy is in step (/share/wettergraph/graph.png)  (24875B on disk, 24875B served, 0 write(s) this run)
    wettergraph: PASS  the light dashboard SVG is in step (/local/wettergraph/graph-light.svg)  (36769B on disk, 36769B rendered, 0 write(s) this run)
    wettergraph: PASS  the dark dashboard SVG is in step (/local/wettergraph/graph-dark.svg)  (36774B on disk, 36774B rendered, 0 write(s) this run)
    wettergraph: PASS  unknown paths 404  (404)
    wettergraph: PASS  options file is readable  (/data/options.json)
    wettergraph: PASS  /forecast.json serves the normalised series  (200 88 samples)
-   wettergraph: PASS  met.no User-Agent is descriptive  (Wettergraph/0.5.1 (Home Assistant app; +https://github.com/macmacs/ha-wettergraph))
+   wettergraph: PASS  met.no User-Agent is descriptive  (Wettergraph/0.6.0 (Home Assistant app; +https://github.com/macmacs/ha-wettergraph))
    wettergraph: PASS  the time axis has a real local zone (graph-spec §4.1)  (Europe/Berlin from TZ, now 12:36 CEST)
-   wettergraph: startup check 20/20 passed
+   wettergraph: startup check 22/22 passed
    ```
 
    The byte counts and the sample count are yours; the paths and the check
@@ -169,6 +171,8 @@ clause for clause. Two per-request knobs, both validated by the renderer:
   clamped to 560..1588 (`docs/graph-spec.md` §1.2); junk falls back to 794.
   The card scales the SVG to its tile, so this mostly sets the PNG's size.
 - `?theme=light|dark` - anything unknown is light (§2.2).
+- `?daynight=0|1` - the night shading from `sun.sun` (§4.9); without it the
+  `day_night` option decides.
 
 What the image holds: a 60 h window from the hour of the **render**, its tail
 interpolated out of met.no's 6-hourly entries (§4.8); yr's cell grid with a
@@ -323,6 +327,7 @@ install where the port is blocked) and the `share wrote ...` line in the log.
 | `update_interval` | `15` | Minutes between refreshes. Used when met.no serves no `Expires` header; `Expires` wins when present. |
 | `image_width` | `794` | Width of the image the app serves when the URL asks for nothing, clamped to 560..1588 (graph-spec §1.2). Height follows the design canvas, `round(width * 210/794.2373)`. |
 | `image_theme` | `light` | `light` or `dark` when the URL asks for nothing (§2.2). |
+| `day_night` | `true` | Shade the night from HA's `sun.sun` (§4.9). `?daynight=0\|1` overrides it per request. Needs `homeassistant_api`, which the app asks for. |
 
 The last two are the **defaults**: the status page's own image, the `/share`
 copy and any bare `/image/graph` follow them, while `?width=` and `?theme=` in a

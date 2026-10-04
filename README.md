@@ -23,6 +23,8 @@ same SVGs a dashboard card reads, so the font is the one your browser has
 - Hourly rain bars on a fixed 0..10 mm/h axis.
 - A °C axis on the left, an mm axis on the right, a day separator at every
   local midnight, hour labels every 2 h.
+- The night shaded from Home Assistant's `sun.sun` (option `day_night`,
+  per request `?daynight=0|1`).
 - No wind, no attribution, no "now" marker. Those are left out on purpose.
 
 When met.no has been unreachable for over 6 h the last good graph is served
@@ -41,7 +43,7 @@ Home Assistant OS only. A native (container) install has no app store.
 3. Reload the store page if needed, then install **Wettergraph**.
 4. **Start** it and open the **Log** tab. The startup check runs the real
    routes in-process and prints one `PASS` line per route, then
-   `wettergraph: startup check 20/20 passed`. A failing line names what to
+   `wettergraph: startup check 22/22 passed`. A failing line names what to
    fix. Home Assistant OS gives you no shell inside the container, so this
    check is the self-test.
 5. Open the app's status page from the sidebar (it runs behind ingress). It

@@ -88,6 +88,8 @@ otherwise. Clauses below refer to these by name instead of repeating literals.
 | Rain bar | `#006edb` | `#00b8f1` |
 | Over-max rain value | `#ffffff` | `#21292b` |
 | Age chip text and dot | `#56616c` | `#a2a5b3` |
+| Night shade (§4.9) | `#21292b` at `0.08` | none |
+| Day shade (§4.9) | none | `#c3d0d8` at `0.08` |
 
   Two traps this table hides: the dark day separator is `#c3d0d8`, the same hex
   light mode uses for its *grid*, and the over-max value inverts, because it is
@@ -180,6 +182,16 @@ otherwise. Clauses below refer to these by name instead of repeating literals.
   covering it. The plot therefore reaches the right edge on every render.
   A slot that cannot be filled at all - no entry on either side - is a gap: the
   curve breaks, no bar, no icon.
+- **§4.9** Day/night shading, cloned from the Android Wettergraph widget, not
+  from yr. One rect over the whole plot band, drawn **behind the grid**, filled
+  with one horizontal gradient. The sun times are Home Assistant's own
+  `sun.sun` (`next_rising`, `next_setting`), extrapolated in 24 h steps across
+  the window; in polar day or night (next event more than a day away) only the
+  real events and the entity's state are used. Each sunrise and sunset is a
+  linear ramp from `1 h` before to `1 h` after the event, capped at half the
+  gap to its neighbour. Light shades the night, dark lifts the day (§2.3); the
+  other side stays the background. No `sun.sun` reading draws no shade. On by
+  default; the `day_night` option and `?daynight=0|1` per request switch it.
 
 ## §5 Temperature axis and curve
 
@@ -304,8 +316,9 @@ Explicit omissions, so no ticket adds them back by accident:
   any kind: it is an image.
 - **§9.5** A `lang` option: labels are German. A handful of strings do not earn an
   option yet; add it when a second language is actually needed.
-- **§9.6** Any effect: shadows, glows, rounded plot corners. The one gradient on
-  the image is the curve's (§5.5), and it is a colour switch, not a decoration.
+- **§9.6** Any effect: shadows, glows, rounded plot corners. The curve's
+  gradient (§5.5) is a colour switch, not a decoration, and the §4.9 shade
+  carries information (the hours of daylight); nothing else is a gradient.
 - **§9.7** `kein Niederschlag`. An empty rain row on a fixed axis (§7.2)
   already says it, and the text cost a clause that had to be kept in step with
   the scale.
@@ -324,6 +337,7 @@ Explicit omissions, so no ticket adds them back by accident:
 | §4.3 cell grid | vertical every hour, horizontal every `12` px |
 | §4.6 day-label threshold | `6.5` h |
 | §4.7 hour labels | every `2 h`, last point skipped (`30` labels) |
+| §4.9 day/night shade | on, `1 h` ramp either side of each sun event |
 | §5.1 °C ladder | `r` in `1, 2, 3, 5, 10` °C per row, 10 rows, `29` px headroom |
 | §6.1 icon cadence | every `2 h` (`30` icons) |
 | §6.2 icon box | `24 x 24` |
