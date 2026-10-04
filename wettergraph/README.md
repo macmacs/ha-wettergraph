@@ -199,8 +199,8 @@ all the frame plus `noch keine Daten` and the last error.
 - The intermediate SVG stays at `/image/graph.svg` (same knobs) for debugging;
   the PNG is the published artifact.
 - Preview renders: `docs/preview-light.svg` and `docs/preview-dark.svg`, a
-  live Oslo forecast at 794 px, one per theme. `tools/render-check.py` proves
-  all 91 clause checks, including geometry parity against
+  live Oslo forecast at 794 px, one per theme, day/night shading on.
+  `tools/render-check.py` proves all 95 clause checks, including geometry parity against
   `tools/assets/graph-reference-v2.svg`.
 
 ## The dashboard (ticket 07)

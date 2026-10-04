@@ -11,9 +11,10 @@ Python and `resvg-py` in about 140 ms.
 ![Wettergraph, light theme, Oslo](docs/preview-light.svg)
 ![Wettergraph, dark theme, Oslo](docs/preview-dark.svg)
 
-Both previews are a live Oslo forecast at 794 px, one per theme. They are the
-same SVGs a dashboard card reads, so the font is the one your browser has
-(nothing is embedded).
+Both previews are a live Oslo forecast at 794 px, one per theme, with the
+day/night shading on (Oslo's real sunrise and sunset). Light shades the night,
+dark lifts the day. They are the same SVGs a dashboard card reads, so the font
+is the one your browser has (nothing is embedded).
 
 ## What the image holds
 
