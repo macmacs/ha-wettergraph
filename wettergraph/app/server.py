@@ -25,6 +25,10 @@ the port at all: the dashboard is HTTPS, the port is HTTP, and the image is
 blocked as mixed content. So both themes are also written into HA's own ``www``
 folder and served by HA at ``/local/wettergraph/graph-light.svg`` and
 ``graph-dark.svg`` - same origin, no rotating token, scalable in its tile.
+
+The night is shaded (graph-spec §4.9) from HA's own ``sun.sun`` entity, read
+through the Supervisor API (sun.py). ``day_night`` switches it, ``?daynight=``
+overrides the option per request.
 """
 
 from __future__ import annotations
@@ -42,6 +46,7 @@ import localzone
 import metno
 import publish
 import render
+import sun
 
 OPTIONS_PATH = Path(os.environ.get("WG_OPTIONS", "/data/options.json"))
 DATA_DIR = Path("/data")
@@ -57,6 +62,8 @@ NO_CACHE = "no-store, no-cache, must-revalidate, max-age=0"
 
 # Set in main() (or in --self-test mode); the request handler reads it.
 CACHE: metno.ForecastCache | None = None
+# HA's sun.sun, refreshed in main(); without it the graph has no shading.
+SUN = sun.SunReader()
 # The /share copy of the served image (the fallback route, see publish.py).
 PUBLISHER = publish.Publisher()
 # Ticket 07: the dashboard's own artifact, on the HA origin under /local/. Both
@@ -138,11 +145,24 @@ def image_options(opts: dict) -> tuple[int, str]:
     return width, (theme if theme in render.PALETTES else "light")
 
 
+def day_night(opts: dict, query: dict | None = None) -> bool:
+    """§4.9 shading on or off: ``?daynight=`` wins, else the option (default on)."""
+    if query and "daynight" in query:
+        return flag(query, "daynight")
+    return opts.get("day_night", True) is not False
+
+
+def sun_for(opts: dict, query: dict | None = None) -> dict | None:
+    """The sun.sun reading to render with, or None for no shading."""
+    return SUN.reading() if day_night(opts, query) else None
+
+
 def default_png(now: float | None = None) -> bytes:
     """The image served when the URL carries no knobs: options + cached series."""
-    width, theme = image_options(options())
+    opts = options()
+    width, theme = image_options(opts)
     return render.render_view(
-        current_view(), width=width, theme=theme, now=now or time.time()
+        current_view(), width=width, theme=theme, now=now or time.time(), sun=sun_for(opts)
     )
 
 
@@ -154,9 +174,10 @@ def theme_svg(theme: str, now: float | None = None) -> bytes:
     follows ``image_width`` because it sets the SVG's intrinsic size, which is
     what a card with ``rows: auto`` scales *from*.
     """
-    width, _ = image_options(options())
+    opts = options()
+    width, _ = image_options(opts)
     svg = render.build_view_svg(
-        current_view(), width=width, theme=theme, now=now or time.time()
+        current_view(), width=width, theme=theme, now=now or time.time(), sun=sun_for(opts)
     )
     return svg.encode("utf-8")
 
@@ -210,6 +231,26 @@ def data_html() -> str:
         f"local time now {time.strftime('%H:%M %Z')}</p>"
         f"<p>met.no cache: <code>{html.escape(view['cache_path'])}</code> - raw view at "
         f"<code>/forecast.json</code></p>"
+        f"{sun_html()}"
+    )
+
+
+def sun_html() -> str:
+    """The day/night line on the status page."""
+    if not day_night(options()):
+        return "<p>day/night shading: off (option <code>day_night</code>)</p>"
+    state = SUN.status()
+    reading = state["reading"]
+    if reading is None:
+        return (
+            f"<p>day/night shading: <b>no sun.sun yet</b>, last error "
+            f"<code>{html.escape(state['last_error'] or 'none')}</code></p>"
+        )
+    return (
+        f"<p>day/night shading: sun.sun <code>{html.escape(str(reading['state']))}</code>, "
+        f"next rising <code>{html.escape(str(reading['next_rising']))}</code>, next setting "
+        f"<code>{html.escape(str(reading['next_setting']))}</code>, read "
+        f"{age_text(state['age_seconds'])} ago</p>"
     )
 
 
@@ -350,8 +391,8 @@ def page_html(opts: dict, host: str | None = None) -> str:
 <h1>Wettergraph</h1>
 <p>Rendering is live: the image below is the cached met.no series drawn to
 <code>docs/graph-spec.md</code>. Temperature curve, weather icons, precipitation
-band; no wind. <code>?width=</code> (560-1588) and <code>?theme=dark</code> are
-per-request; without them the options decide.</p>
+band; no wind. <code>?width=</code> (560-1588), <code>?theme=dark</code> and
+<code>?daynight=0|1</code> are per-request; without them the options decide.</p>
 <p><code>{OPTIONS_PATH}</code> - read fresh on every request.</p>
 <table>{rows}</table>
 {data_html()}
@@ -415,6 +456,7 @@ class Handler(BaseHTTPRequestHandler):
                 theme=query.get("theme", [""])[0] or theme,
                 now=time.time(),
                 show_age=flag(query, "age"),
+                sun=sun_for(opts, query),
             )
             age = view.get("age_seconds")
             self._send(
@@ -439,6 +481,7 @@ class Handler(BaseHTTPRequestHandler):
                 theme=query.get("theme", [""])[0] or theme,
                 now=time.time(),
                 show_age=flag(query, "age"),
+                sun=sun_for(opts, query),
             )
             self._send(200, svg.encode("utf-8"), "image/svg+xml; charset=utf-8", "no-store")
             return
@@ -599,6 +642,26 @@ def run_checks(bind_port: int = 0) -> list[tuple[str, bool, str]]:
         ok, detail = False, f"renderer raised {exc!r}"
     checks.append(("?age=1 draws the age chip (the card's only moving pixel)", ok, detail))
 
+    # §4.9: the renderer shades a fixture night, and HA's sun.sun is readable.
+    try:
+        shaded = render.build_svg(fixture, fetched_at=now, now=now, sun=sun.fixture(now))
+        ok = 'fill="url(#day-night-gradient)"' in shaded
+        detail = "fixture night shaded" if ok else "no day/night gradient in the SVG"
+    except Exception as exc:  # noqa: BLE001
+        ok, detail = False, f"renderer raised {exc!r}"
+    checks.append(("renderer shades the night (fixture, graph-spec §4.9)", ok, detail))
+    if day_night(opts):
+        state = SUN.status()
+        checks.append(
+            (
+                "sun.sun is readable for the day/night shading",
+                state["reading"] is not None,
+                str(state["reading"]["state"]) if state["reading"] else f"{state['last_error']}",
+            )
+        )
+    else:
+        checks.append(("sun.sun is readable for the day/night shading", True, "day_night is off"))
+
     # The file copy has to be in step, not freshly written: after a restart the
     # file is usually already correct, and "writes" would then be 0 forever.
     served = default_png()
@@ -699,6 +762,8 @@ def main() -> None:
         flush=True,
     )
     CACHE = cache_for(options())
+    # First read in the foreground, so the first published files are shaded.
+    SUN.fetch_once()
     print(f"wettergraph: time zone {ZONE[0]} (from {ZONE[1]}), local time now {time.strftime('%H:%M %Z')}", flush=True)
     print(f"wettergraph: met.no UA={metno.USER_AGENT!r} cache={CACHE.cache_path()}", flush=True)
     # Every file exists before anyone asks for it, so a Local file camera or a
@@ -729,6 +794,7 @@ def main() -> None:
             flush=True,
         )
     stop = threading.Event()
+    threading.Thread(target=SUN.run_forever, args=(stop,), name="sun-reader", daemon=True).start()
     threading.Thread(
         target=CACHE.run_forever,
         args=(stop,),
@@ -765,5 +831,6 @@ if __name__ == "__main__":
     if "--self-test" in os.sys.argv:
         CACHE = cache_for(options())
         CACHE.load()
+        SUN.fetch_once()
         os.sys.exit(1 if report(run_checks(int(os.environ.get("WG_PORT", "8099")))) else 0)
     main()

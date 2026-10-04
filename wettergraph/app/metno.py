@@ -65,7 +65,7 @@ LON_DEFAULT = 11.5538
 
 DEFAULT_CACHE_DIR = Path(os.environ.get("WG_DATA", "/data"))
 
-APP_VERSION = os.environ.get("BUILD_VERSION") or "0.5.1"
+APP_VERSION = os.environ.get("BUILD_VERSION") or "0.6.0"
 # met.no requires a User-Agent that names the application and gives a contact;
 # without one it answers 403. The repo URL is the contact.
 USER_AGENT = (

@@ -51,6 +51,8 @@ from pathlib import Path
 
 import resvg_py
 
+import sun as sunmod
+
 # ------------------------------------------------------------ §0 constants
 
 STEP = 722.0 / 59.0  # 12.2373 px per hour: yr's 722 px plot over 59 intervals
@@ -106,6 +108,10 @@ CHIP_X = GUTTER + PLOT_W - CHIP_WIDTH  # 670.2373, right-aligned to the plot
 CHIP_Y = ROW_LEGEND
 STALE_MAX_HOURS = 48
 
+# §4.9 day/night shading: the Android widget's ramp, one hour either side of
+# each sunrise and sunset, capped so two ramps never overlap.
+SHADE_RAMP_HOURS = 1.0
+
 WEEKDAYS = ("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")  # §4.5
 
 # §2.3, light and dark. Same geometry, only the palette changes (§2.1) - which
@@ -121,6 +127,8 @@ PALETTES = {
         "cold": "#006edb",
         "rain": "#006edb",
         "overmax": "#ffffff",
+        "shade_day": ("#ffffff", 0.0),  # §4.9: light shades the night
+        "shade_night": ("#21292b", 0.08),
     },
     "dark": {
         "background": "#020a14",
@@ -132,6 +140,8 @@ PALETTES = {
         "cold": "#00b8f1",
         "rain": "#00b8f1",
         "overmax": "#21292b",  # inverts: it is drawn on the bar, not the ground
+        "shade_day": ("#c3d0d8", 0.08),  # §4.9: dark lifts the day instead
+        "shade_night": ("#000000", 0.0),
     },
 }
 
@@ -417,6 +427,41 @@ def age_label(age_seconds) -> str:
     return stale_label(age)
 
 
+# ------------------------------------------------------------------- shade
+
+
+def _shade(sun, start: int, palette: dict) -> str | None:
+    """§4.9: the plot band tinted by daylight, ramped over each sun event."""
+    phases = sunmod.transitions(sun, start - 2 * 3600 * SHADE_RAMP_HOURS, start + (WINDOW_HOURS + 2) * 3600)
+    if phases is None:
+        return None
+    day, events = phases
+    colours = {True: palette["shade_day"], False: palette["shade_night"]}
+    if not events and colours[day][1] <= 0:
+        return None
+
+    def stop(x: float, is_day: bool) -> str:
+        colour, opacity = colours[is_day]
+        offset = min(max(x / PLOT_W, 0.0), 1.0) * 100.0
+        return f'<stop offset="{_n(offset)}%" stop-color="{colour}" stop-opacity="{_n(opacity)}"/>'
+
+    xs = [(moment - start) / 3600.0 * STEP for moment, _ in events]
+    stops = [stop(0.0, day)]
+    for k, ((_, is_day), x) in enumerate(zip(events, xs)):
+        ramp = SHADE_RAMP_HOURS * STEP
+        if k > 0:
+            ramp = min(ramp, (x - xs[k - 1]) / 2.0)
+        if k + 1 < len(xs):
+            ramp = min(ramp, (xs[k + 1] - x) / 2.0)
+        stops.append(stop(x - ramp, not is_day))
+        stops.append(stop(x + ramp, is_day))
+    return (
+        f'<defs><linearGradient id="day-night-gradient" x1="0" y1="0" x2="{_n(PLOT_W)}" y2="0"'
+        f' gradientUnits="userSpaceOnUse">{"".join(stops)}</linearGradient></defs>'
+        f'<rect x="0" y="0" width="{_n(PLOT_W)}" height="{_n(PLOT_H)}" fill="url(#day-night-gradient)"/>'
+    )
+
+
 # --------------------------------------------------------------------- svg
 
 
@@ -432,8 +477,13 @@ def build_svg(
     theme: str = "light",
     icons_dir: Path | str | None = None,
     show_age: bool = False,
+    sun: dict | None = None,
 ) -> str:
-    """The whole image as one SVG. Deterministic for the same arguments."""
+    """The whole image as one SVG. Deterministic for the same arguments.
+
+    ``sun`` is a ``sun.sun`` reading (see :mod:`sun`); ``None`` draws no
+    day/night shading (§4.9).
+    """
     width = clamp_width(width)
     height = height_for(width)
     palette = PALETTES.get(str(theme), PALETTES["light"])  # §2.2 unknown -> light
@@ -485,7 +535,12 @@ def build_svg(
     # ---------------------------------------------------------- the one band
     out.append(f'<g transform="translate({_n(GUTTER)} {_n(ROW_PLOT)})">')
 
-    # §4.3 the cell grid, behind everything: 11 horizontal lines, one vertical
+    # §4.9 day/night shading, behind the grid: one rect, one horizontal gradient.
+    shade = _shade(sun, start, palette)
+    if shade:
+        out.append(shade)
+
+    # §4.3 the cell grid, behind everything else: 11 horizontal lines, one vertical
     # per point. §4.4 a local midnight replaces its grid line with a separator,
     # it does not add one. The outermost grid lines are the frame.
     for row in range(int(PLOT_H // GRID_DY) + 1):
@@ -686,7 +741,7 @@ def render_png(samples, *, font_path: Path | str | None = None, **kwargs) -> byt
     return _rasterise(build_svg(samples, **kwargs), width, font_path)
 
 
-def _view_arguments(view: dict, *, width, theme, now, icons_dir, show_age=False) -> dict:
+def _view_arguments(view: dict, *, width, theme, now, icons_dir, show_age=False, sun=None) -> dict:
     view = view or {}
     return dict(
         samples=view.get("samples") or [],
@@ -699,24 +754,35 @@ def _view_arguments(view: dict, *, width, theme, now, icons_dir, show_age=False)
         theme=theme,
         icons_dir=icons_dir,
         show_age=show_age,
+        sun=sun,
     )
 
 
 def build_view_svg(
-    view: dict, *, width=DEFAULT_WIDTH, theme="light", now=None, icons_dir=None, show_age=False
+    view: dict, *, width=DEFAULT_WIDTH, theme="light", now=None, icons_dir=None, show_age=False, sun=None
 ) -> str:
     """The view from :meth:`metno.ForecastCache.view`, as SVG text."""
     return build_svg(
-        **_view_arguments(view, width=width, theme=theme, now=now, icons_dir=icons_dir, show_age=show_age)
+        **_view_arguments(
+            view, width=width, theme=theme, now=now, icons_dir=icons_dir, show_age=show_age, sun=sun
+        )
     )
 
 
 def render_view(
-    view: dict, *, width=DEFAULT_WIDTH, theme="light", now=None, icons_dir=None, font_path=None, show_age=False
+    view: dict,
+    *,
+    width=DEFAULT_WIDTH,
+    theme="light",
+    now=None,
+    icons_dir=None,
+    font_path=None,
+    show_age=False,
+    sun=None,
 ) -> bytes:
     """The view from :meth:`metno.ForecastCache.view`, as a PNG."""
     arguments = _view_arguments(
-        view, width=width, theme=theme, now=now, icons_dir=icons_dir, show_age=show_age
+        view, width=width, theme=theme, now=now, icons_dir=icons_dir, show_age=show_age, sun=sun
     )
     return render_png(font_path=font_path, **arguments)
 
@@ -755,6 +821,7 @@ def _cli(argv: list[str] | None = None) -> int:
     parser.add_argument("--now", type=float, help="epoch seconds, for a reproducible window and chip")
     parser.add_argument("--dry", action="store_true", help="fixture with no precipitation")
     parser.add_argument("--age-hours", type=float, help="draw the stale chip with this age")
+    parser.add_argument("--daynight", action="store_true", help="shade night, sunrise 07:00, sunset 19:00")
     parser.add_argument("--font", default=str(FONT_PATH))
     parser.add_argument("--icons", default=str(ICONS_DIR))
     arguments = parser.parse_args(argv)
@@ -777,6 +844,7 @@ def _cli(argv: list[str] | None = None) -> int:
         width=arguments.width,
         theme=arguments.theme,
         icons_dir=arguments.icons,
+        sun=sunmod.fixture(arguments.now or time.time()) if arguments.daynight else None,
     )
     if str(arguments.out).endswith(".svg"):
         Path(arguments.out).write_text(build_svg(samples, **kwargs))

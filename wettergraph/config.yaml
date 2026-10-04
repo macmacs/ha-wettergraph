@@ -1,5 +1,5 @@
 name: Wettergraph
-version: "0.5.1"
+version: "0.6.0"
 slug: wettergraph
 description: >-
   Renders a Wettergraph-style forecast image for one place - temperature curve,
@@ -33,6 +33,9 @@ map:
 # to Docker's tini as PID 1 instead, and s6 then dies with
 # "s6-overlay-suexec: fatal: can only run as pid 1".
 init: false
+# The day/night shading (graph-spec §4.9) reads HA's own sun.sun entity through
+# the Supervisor's Core API proxy, with the SUPERVISOR_TOKEN this key grants.
+homeassistant_api: true
 ports:
   8099/tcp: 8099
 ports_description:
@@ -51,6 +54,7 @@ options:
   update_interval: 15
   image_width: 794
   image_theme: light
+  day_night: true
 schema:
   page_note: str
   place_id: str
@@ -62,3 +66,5 @@ schema:
   # still override both per request.
   image_width: int(560,1588)
   image_theme: list(light|dark)
+  # §4.9 night shading from sun.sun; ?daynight=0|1 overrides it per request.
+  day_night: bool

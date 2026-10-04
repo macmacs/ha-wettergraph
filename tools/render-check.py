@@ -392,6 +392,43 @@ gap_paths = [el for el in kids(rows(svg_of(gap))[1][PLOT_ROW], "path") if el.get
 check("§4.8 a slot with no entry either side is a gap: the curve breaks",
       len(gap_paths) == 2, f"{len(gap_paths)} curve paths")
 
+# §4.9 day/night shading from a sun.sun reading: sunset 19:00, sunrise 07:00.
+# The 08:00 window sees sunsets 11, 35, 59 h in and sunrises 23, 47 h in; the
+# 07:00 sunrise an hour before it still counts, its ramp ends exactly at x = 0.
+SUN = {"state": "above_horizon", "next_rising": iso(START + 23 * 3600), "next_setting": iso(START + 11 * 3600)}
+
+
+def shade_stops(svg: str) -> list[ET.Element]:
+    gradient = next((el for el in ET.fromstring(svg).iter() if el.get("id") == "day-night-gradient"), None)
+    return [] if gradient is None else list(gradient)
+
+
+def at_hour(stop: ET.Element) -> float:
+    return float(stop.get("offset").rstrip("%")) / 100 * render.PLOT_W / STEP
+
+
+shade_svg = svg_of(series(yr_temps), sun=SUN)
+shade_plot = rows(shade_svg)[1][PLOT_ROW]
+shade_order = [local(el.tag) for el in shade_plot if local(el.tag) in ("rect", "line")]
+stops = shade_stops(shade_svg)
+check("§4.9 the shade is one rect behind the grid, one stop pair per sun event",
+      shade_order[0] == "rect" and kids(shade_plot, "rect")[0].get("fill") == "url(#day-night-gradient)"
+      and len(stops) == 1 + 2 * 6,
+      f"{len(stops)} stops, first {shade_order[0]}")
+sunset = [(round(at_hour(el), 3), float(el.get("stop-opacity"))) for el in stops[3:5]]
+check("§4.9 light shades the night only, ramped one hour either side of sunset",
+      float(stops[2].get("stop-opacity")) == 0.0 and close(at_hour(stops[2]), 0.0)
+      and sunset == [(10.0, 0.0), (12.0, 0.08)],
+      f"window opens at {stops[2].get('stop-opacity')}, sunset {sunset}")
+dark = [el for el in shade_stops(svg_of(series(yr_temps), sun=SUN, theme="dark")) if el.get("stop-color") == "#c3d0d8"]
+check("§4.9 dark lifts the day instead", dark and float(dark[0].get("stop-opacity")) == 0.08)
+polar = {"state": "below_horizon", "next_rising": iso(START + 30 * 86400), "next_setting": iso(START + 30 * 86400 + 3600)}
+polar_stops = shade_stops(svg_of(series(yr_temps), sun=polar))
+check("§4.9 polar night is one flat shade; no sun reading draws none",
+      len(polar_stops) == 1 and polar_stops[0].get("stop-opacity") == "0.08"
+      and not shade_stops(svg_of(series(yr_temps))),
+      f"{len(polar_stops)} polar stops")
+
 
 # ------------------------------------------------------------ §5 axis/curve
 
